@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Website</title>
+  </head>
+  <body>
+    <h1>Demo Website</h1>
+    <form id="dataForm">
+      <label for="name">Enter Name: </label>
+      <input type="text" id="name" name="name" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <h2>Stored Data</h2>
+    <ul id="dataList"></ul>
+
+    <!-- Link to external JS file -->
+    <script>
+      fetch('http://localhost:3000/api/hello')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
+
+  // Function to fetch data
+async function fetchData() {
+  try {
+      const response = await fetch('http://localhost:3000/api/hello');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Reference the HTML element to display messages
+    const messagesList = document.getElementById('dataList');
+    messagesList.innerHTML = ''; // Clear any existing content
+
+    // Iterate over the array and create list items
+    data.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <p>${item.description}</p>
+            <small>${new Date(item.created_at).toLocaleString()}</small>
+        `;
+        messagesList.appendChild(listItem);
+    });
+  } catch (error) {
+      console.error('Error fetching data:', error);
+  }
+}
+
+window.addEventListener('load', fetchData);
+
+// Function to post data
+
+// Reference to the form and response list
+const form = document.getElementById('dataForm');
+const responseList = document.getElementById('dataList');
+
+// Add an event listener to handle form submission
+form.addEventListener('submit', async (event) => {
+  event.preventDefault(); // Prevent the form from refreshing the page
+
+  // Get the value of the "name" input field
+  const nameInput = document.getElementById('name');
+  const name = nameInput.value.trim(); // Trim whitespace
+
+  if (!name) {
+    alert('Name cannot be empty!');
+    return;
+  }
+
+  try {
+    // Send a POST request with the form data
+    const response = await fetch('http://localhost:3000/api/hello', { // Replace with your API endpoint
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({description:name}), // Replace text as needed
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response JSON
+    const responseData = await response.json();
+
+    // Add a new item to the response list
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `
+      <p>${responseData.description}</p>
+      <small>${new Date(responseData.created_at).toLocaleString()}</small>
+    `;
+    responseList.appendChild(listItem);
+
+    // Clear the input field
+    nameInput.value = '';
+  } catch (error) {
+    console.error('Error during form submission:', error);
+    alert('Failed to submit data!');
+  }
+});
+    </script>
+  </body>
+</html>
