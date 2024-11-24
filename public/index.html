@@ -18,7 +18,7 @@
 
     <!-- Link to external JS file -->
     <script>
-      fetch('http://localhost:3000/api/hello')
+      fetch('/api/hello')
   .then(response => response.json())
   .then(data => {
     console.log(data);
@@ -30,7 +30,7 @@
   // Function to fetch data
 async function fetchData() {
   try {
-      const response = await fetch('http://localhost:3000/api/hello');
+      const response = await fetch('/api/hello');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -79,7 +79,7 @@ form.addEventListener('submit', async (event) => {
 
   try {
     // Send a POST request with the form data
-    const response = await fetch('http://localhost:3000/api/hello', { // Replace with your API endpoint
+    const response = await fetch('/api/hello', { // Replace with your API endpoint
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
